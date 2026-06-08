@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冒險地圖 - LEVEL UP 典禮挑戰</title>
+    <style>
+        /* 全局冒險主題風格 */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Microsoft JhengHei', sans-serif;
+            background-color: #f4eae1;
+            background-image: radial-gradient(#e0cfb8 2px, transparent 2px);
+            background-size: 24px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #4a3b32;
+        }
+
+        h1 {
+            color: #d35400;
+            text-shadow: 2px 2px 0px #f1c40f;
+            margin: 10px 0;
+            font-size: 28px;
+        }
+
+        /* 登入畫面 */
+        #login-screen {
+            background: #fff8ee;
+            border: 6px solid #8b4513;
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 450px;
+            width: 100%;
+            margin-top: 50px;
+        }
+        .wood-title {
+            background: #8b4513;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* 遊戲主畫面 */
+        #game-screen { display: none; width: 100%; max-width: 1050px; text-align: center; }
+
+        /* 頂部 LEVEL UP 收集槽 */
+        .tracker-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            background: #fff3e0;
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 4px solid #8b4513;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .letter-slot {
+            width: 45px;
+            height: 45px;
+            background-color: #dcdde1;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #7f8fa6;
+            border: 3px dashed #7f8fa6;
+            transition: all 0.5s ease;
+        }
+        .letter-slot.active {
+            background-color: #f1c40f;
+            color: #d35400;
+            border: 3px solid #e67e22;
+            box-shadow: 0 0 12px #f1c40f;
+            transform: scale(1.1);
+        }
+
+        /* 核心地圖容器 (流體自適應 + 固定寬高比) */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1000 / 562; /* 精確鎖定原圖比例，防止 iPad 或手機變形 */
+            border: 8px solid #6d3710;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            background-color: #222;
+        }
+
+        /* 底層：全圖冷灰色調 */
+        .map-base-gray {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(0.6) contrast(1.1);
+            display: block;
+        }
+
+        /* 表層：不規則彩色切片 */
+        .map-slice {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+        }
+        .map-slice img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        .map-slice.unlocked { opacity: 1; }
+
+        /* 🗺️ 有機不規則、無縫拼接的 clip-path。共享所有接合頂點，解鎖後完美契合無灰邊 */
+        #slice-1 { clip-path: polygon(0% 0%, 30% 0%, 25% 25%, 35% 50%, 0% 45%); }
+        #slice-4 { clip-path: polygon(30% 0%, 55% 0%, 60% 30%, 50% 52%, 35% 50%, 25% 25%); }
+        #slice-2 { clip-path: polygon(55% 0%, 80% 0%, 75% 25%, 82% 55%, 50% 52%, 60% 30%); }
+        #slice-3 { clip-path: polygon(80% 0%, 100% 0%, 100% 54%, 82% 55%, 75% 25%); }
+        #slice-6 { clip-path: polygon(0% 45%, 35% 50%, 40% 75%, 30% 100%, 0% 100%); }
+        #slice-7 { clip-path: polygon(35% 50%, 50% 52%, 82% 55%, 70% 80%, 75% 100%, 30% 100%, 40% 75%); }
+        #slice-5 { clip-path: polygon(82% 55%, 100% 54%, 100% 100%, 75% 100%, 70% 80%); }
+
+        /* 📍 漂浮金鎖提示框：改用中心點雙向定位 (translate(-50%, -50%))，不論螢幕如何縮放，標籤絕對不移位 */
+        .beige-box {
+            position: absolute;
+            background: #fdf5e6;
+            border: 3px solid #cdb496;
+            border-radius: 10px;
+            padding: 6px 14px;
+            box-shadow: 2px 3px 6px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #7f675b;
+            transition: all 0.5s;
+            z-index: 10;
+            white-space: nowrap;
+            transform: translate(-50%, -50%); /* 核心防錯移位設定 */
+            
+            /* 電腦版默認大小 */
+            font-size: 15px; 
+        }
+        .beige-box.active {
+            background: #fffdf0;
+            border: 3px solid #f1c40f;
+            color: #2c3e50;
+            box-shadow: 0 0 12px rgba(241, 196, 15, 0.6);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        .first-letter {
+            font-size: 22px;
+            font-weight: 900;
+            color: #e74c3c;
+            margin-right: 1px;
+        }
+        .lock-icon { font-size: 16px; color: #95a5a6; margin-right: 2px; }
+
+        /* 精確對應原圖白色對話框中心點的坐標 */
+        #box-1 { top: 17.0%; left: 15.5%; } /* Limitless */
+        #box-4 { top: 15.5%; left: 37.7%; } /* Experience */
+        #box-2 { top: 12.0%; left: 62.1%; } /* Explore */
+        #box-3 { top: 15.0%; left: 83.7%; } /* Valued */
+        #box-6 { top: 54.5%; left: 25.4%; } /* Undertake */
+        #box-7 { top: 68.5%; left: 53.5%; } /* Positive */
+        #box-5 { top: 59.5%; left: 73.7%; } /* Leadership */
+
+        /* 💻 平板電腦與 iPad 縮放微調機制 */
+        @media (max-width: 900px) {
+            .beige-box {
+                font-size: 12px;
+                padding: 4px 10px;
+                border-width: 2px;
+                border-radius: 8px;
+            }
+            .first-letter { font-size: 17px; }
+            .lock-icon { font-size: 13px; }
+            h1 { font-size: 24px; }
+        }
+
+        /* 📱 手機極小螢幕縮放防爆機制 */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 19px; }
+            .letter-slot { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
+            .tracker-container { gap: 6px; padding: 8px 15px; }
+            
+            .beige-box {
+                font-size: 9px;
+                padding: 2px 6px;
+                border-width: 1.5px;
+                border-radius: 5px;
+            }
+            .first-letter { font-size: 13px; }
+            .lock-icon { font-size: 10px; }
+
+            .control-panel {
+                padding: 12px 20px;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+            input[type="text"] { width: 100%; text-align: center; }
+            button { width: 100%; }
+        }
+
+        /* 底部操作面板 */
+        .control-panel {
+            margin-top: 20px;
+            background: #ecd5bc;
+            padding: 15px 35px;
+            border-radius: 15px;
+            border: 4px solid #8b4513;
+            display: inline-flex;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        input[type="text"] {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #a07855;
+            border-radius: 8px;
+            outline: none;
+            width: 220px;
+            text-transform: uppercase;
+        }
+        button {
+            padding: 10px 22px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #1e7e43;
+            transition: all 0.1s;
+        }
+        button:active { transform: translateY(4px); box-shadow: 0 0px 0px #1e7e43; }
+        .team-info-tag { font-size: 16px; font-weight: bold; color: #5d4037; margin-bottom: 5px;}
+
+        /* 模態彈出視窗 (Modal) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 6px solid #e67e22;
+            max-width: 420px;
+            width: 90%;
+        }
+        .close-btn { margin-top: 15px; background-color: #e74c3c; box-shadow: 0 4px 0px #c0392b; width: 100%; }
+
+        /* 後台管理面板樣式 */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .admin-table th { background-color: #f2f2f2; }
+        .reset-btn { background-color: #7f8c8d; box-shadow: 0 4px 0px #95a5a6; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <h2 class="wood-title">📜 冒險者營地</h2>
+        <p style="font-size: 16px; color: #6d4c41; line-height: 1.6;">歡迎各位冒險家！請輸入你們的「組別名稱」，並開始本次探險！</p>
+        <input type="text" id="teamNameInput" placeholder="例如：大熊家族隊 / 第 3 組" style="width:80%; margin-bottom:20px; text-transform:none;"><br>
+        <button onclick="startAdventure()">開啟冒險地圖 ✨</button>
+    </div>
+
+    <div id="game-screen">
+        <div class="team-info-tag" id="currentTeamDisplay">冒險隊伍：</div>
+        <h1>✨ 喚醒地圖拼圖挑戰 ✨</h1>
+
+        <div class="tracker-container">
+            <div class="letter-slot" id="slot-1">?</div>
+            <div class="letter-slot" id="slot-2">?</div>
+            <div class="letter-slot" id="slot-3">?</div>
+            <div class="letter-slot" id="slot-4">?</div>
+            <div class="letter-slot" id="slot-5">?</div>
+            <div class="letter-slot" id="slot-6">?</div>
+            <div class="letter-slot" id="slot-7">?</div>
+        </div>
+
+        <div class="map-wrapper">
+            <img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png" class="map-base-gray" alt="冒險地圖">
+
+            <div class="map-slice" id="slice-1"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-2"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-3"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-4"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-5"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-6"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-7"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+
+            <div class="beige-box" id="box-1"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-2"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-3"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-4"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-5"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-6"><span class="lock-icon">🔒 鎖定</span></div>
+            <div class="beige-box" id="box-7"><span class="lock-icon">🔒 鎖定</span></div>
+        </div>
+
+        <br>
+        <div class="control-panel">
+            <input type="text" id="codeInputField" placeholder="輸入元素代碼..." autocomplete="off">
+            <button onclick="submitCode()">解鎖拼圖 ✨</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="commonModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">提示</h2>
+            <div id="modalBody" style="font-size: 16px; margin: 15px 0; line-height: 1.5;">內容</div>
+            <button id="modalBtn" class="close-btn" onclick="closeModal()">繼續前進</button>
+        </div>
+    </div>
+
+    <script>
+        // 核心密碼本對照表
+        const codeBook = {
+            'L1': { id: 1, letter: 'L', word: 'imitless' },
+            'E2': { id: 2, letter: 'E', word: 'xplore' },
+            'V3': { id: 3, letter: 'V', word: 'alued' },
+            'E4': { id: 4, letter: 'E', word: 'xperience' },
+            'L5': { id: 5, letter: 'L', word: 'eadership' },
+            'U6': { id: 6, letter: 'U', word: 'ndertake' },
+            'P7': { id: 7, letter: 'P', word: 'ositive' }
+        };
+
+        let gameState = {
+            teamName: "",
+            startTime: "",
+            unlockedIds: [],
+            logs: []
+        };
+
+        window.onload = function() {
+            const savedState = localStorage.getItem('adventure_game_state');
+            if (savedState) {
+                gameState = JSON.parse(savedState);
+                renderSavedGame();
+            }
+        };
+
+        function startAdventure() {
+            const nameInput = document.getElementById('teamNameInput').value.trim();
+            if (!nameInput) {
+                alert("請先輸入你們的組別名稱唷！");
+                return;
+            }
+            gameState.teamName = nameInput;
+            gameState.startTime = new Date().toLocaleString();
+            gameState.unlockedIds = [];
+            gameState.logs = [];
+            
+            saveToLocalStorage();
+            renderSavedGame();
+        }
+
+        function renderSavedGame() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+            document.getElementById('currentTeamDisplay').innerHTML = `🏃‍♂️ 正在冒險的隊伍：<strong>${gameState.teamName}</strong> (開始時間：${gameState.startTime})`;
+
+            gameState.unlockedIds.forEach(id => {
+                applyUnlockVisuals(id);
+            });
+        }
+
+        function submitCode() {
+            const inputField = document.getElementById('codeInputField');
+            const code = inputField.value.trim().toUpperCase();
+            if (!code) return;
+
+            // 隱藏後台指令 (輸入 ADMIN888 即可開啟控制台清除紀錄)
+            if (code === 'ADMIN888') {
+                openAdminConsole();
+                inputField.value = "";
+                return;
+            }
+
+            const element = codeBook[code];
+            if (element) {
+                if (gameState.unlockedIds.includes(element.id)) {
+                    showModal("已經解鎖過囉！", "這個部分的拼接地圖已經恢復彩色的了，快去尋找其他元素代碼吧！");
+                } else {
+                    gameState.unlockedIds.push(element.id);
+                    gameState.logs.push({
+                        id: element.id,
+                        elementName: element.letter + element.word,
+                        time: new Date().toLocaleString()
+                    });
+                    saveToLocalStorage();
+                    
+                    applyUnlockVisuals(element.id);
+                    checkMilestones(element.letter + element.word);
+                }
+            } else {
+                showModal("🔮 代碼無效", "找不到對應這個元素代碼的地圖板塊，請確認代碼是否有輸入錯誤。");
+            }
+            inputField.value = "";
+        }
+
+        function applyUnlockVisuals(id) {
+            // 讓指定的不規則切片淡入變成彩色
+            document.getElementById(`slice-${id}`).classList.add('unlocked');
+
+            // 頂部收集槽亮起
+            const data = Object.values(codeBook).find(item => item.id === id);
+            const slot = document.getElementById(`slot-${id}`);
+            slot.classList.add('active');
+            slot.textContent = data.letter;
+
+            // 地圖上的白色橫幅完美展開單字全稱
+            const box = document.getElementById(`box-${id}`);
+            box.classList.add('active');
+            box.innerHTML = `<span class="first-letter">${data.letter}</span>${data.word}`;
+        }
+
+        function checkMilestones(currentWord) {
+            const count = gameState.unlockedIds.length;
+            if (count === 7) {
+                showModal("🎉 終極成就：LEVEL UP！ 🎉", `成功啟動最後一塊元素「${currentWord}」！你們完美集齊了 7 大元素並成功讓整幅冒險地圖重獲新生！請立刻前往終點站領取大會榮譽獎品！`);
+            } else if (count === 5) {
+                showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！地圖已拼湊完成 5 個部分了，隱藏訊息 <strong>LEVEL UP</strong> 快要完全出現了！加油！`);
+            } else if (count === 3) {
+                showModal("✨ 初試身手 ✨", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 3 個元素了，地圖正在一點一滴恢復光明，繼續前進下一站！`);
+            } else {
+                showModal("解鎖成功！", `恭喜獲得 <strong>${currentWord}</strong> 元素！相應的地圖部分已成功與世界無縫對接！`);
+            }
+        }
+
+        function openAdminConsole() {
+            let logRows = "";
+            Object.values(codeBook).forEach(item => {
+                const foundLog = gameState.logs.find(l => l.id === item.id);
+                const statusStr = foundLog ? `<span style="color:green;font-weight:bold;">已完成 (解鎖時間: ${foundLog.time})</span>` : `<span style="color:red;">未完成</span>`;
+                logRows += `<tr><td>${item.id}</td><td><strong>${item.letter}</strong>${item.word}</td><td>${statusStr}</td></tr>`;
+            });
+
+            const adminHtml = `
+                <div style="text-align:left;">
+                    <p><strong>冒險隊伍：</strong> ${gameState.teamName}</p>
+                    <p><strong>登入時間：</strong> ${gameState.startTime}</p>
+                    <p><strong>目前已解鎖數：</strong> ${gameState.unlockedIds.length} / 7</p>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>編號</th><th>攤位元素</th><th>目前進度紀錄</th></tr>
+                        </thead>
+                        <tbody>${logRows}</tbody>
+                    </table>
+                    <br>
+                    <button class="reset-btn" onclick="resetProgress()" style="width:100%; padding: 10px; font-weight: bold; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 清除此裝置進度（供下一組使用）</button>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').textContent = "📋 大會中央數據控制台";
+            document.getElementById('modalBody').innerHTML = adminHtml;
+            document.getElementById('modalBtn').textContent = "關閉控制台";
+            document.getElementById('commonModal').style.display = 'flex';
+        }
+
+        function resetProgress() {
+            if (confirm("確定要格式化清除此組別的所有紀錄，並返回登入頁嗎？(此動作無法還原)")) {
+                localStorage.removeItem('adventure_game_state');
+                location.reload();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('adventure_game_state', JSON.stringify(gameState));
+        }
+
+        function showModal(title, body) {
+            document.getElementById('modalTitle').innerHTML = title;
+            document.getElementById('modalBody').innerHTML = body;
+            document.getElementById('modalBtn').textContent = "繼續前進";
+            document.getElementById('commonModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('commonModal').style.display = 'none';
+        }
+
+        document.getElementById('codeInputField').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') submitCode();
+        });
+    </script>
+</body>
+</html>
