@@ -121,7 +121,7 @@
         }
         .map-slice.unlocked { opacity: 1; }
 
-        /* 🗺️ 有機不規則、無縫拼接的 clip-path。共享所有接合頂點，解鎖後完美契合無灰邊 */
+        /* 有機不規則、無縫拼接的 clip-path */
         #slice-1 { clip-path: polygon(0% 0%, 30% 0%, 25% 25%, 35% 50%, 0% 45%); }
         #slice-4 { clip-path: polygon(30% 0%, 55% 0%, 60% 30%, 50% 52%, 35% 50%, 25% 25%); }
         #slice-2 { clip-path: polygon(55% 0%, 80% 0%, 75% 25%, 82% 55%, 50% 52%, 60% 30%); }
@@ -130,7 +130,7 @@
         #slice-7 { clip-path: polygon(35% 50%, 50% 52%, 82% 55%, 70% 80%, 75% 100%, 30% 100%, 40% 75%); }
         #slice-5 { clip-path: polygon(82% 55%, 100% 54%, 100% 100%, 75% 100%, 70% 80%); }
 
-        /* 📍 漂浮金鎖提示框：改用中心點雙向定位 (translate(-50%, -50%))，不論螢幕如何縮放，標籤絕對不移位 */
+        /* 漂浮金鎖提示框 */
         .beige-box {
             position: absolute;
             background: #fdf5e6;
@@ -146,9 +146,7 @@
             transition: all 0.5s;
             z-index: 10;
             white-space: nowrap;
-            transform: translate(-50%, -50%); /* 核心防錯移位設定 */
-            
-            /* 電腦版默認大小 */
+            transform: translate(-50%, -50%);
             font-size: 15px; 
         }
         .beige-box.active {
@@ -166,50 +164,31 @@
         }
         .lock-icon { font-size: 16px; color: #95a5a6; margin-right: 2px; }
 
-        /* 精確對應原圖白色對話框中心點的坐標 */
-        #box-1 { top: 17.0%; left: 15.5%; } /* Limitless */
-        #box-4 { top: 15.5%; left: 37.7%; } /* Experience */
-        #box-2 { top: 12.0%; left: 62.1%; } /* Explore */
-        #box-3 { top: 15.0%; left: 83.7%; } /* Valued */
-        #box-6 { top: 54.5%; left: 25.4%; } /* Undertake */
-        #box-7 { top: 68.5%; left: 53.5%; } /* Positive */
-        #box-5 { top: 59.5%; left: 73.7%; } /* Leadership */
+        /* 精確對應坐標 */
+        #box-1 { top: 17.0%; left: 15.5%; }
+        #box-4 { top: 15.5%; left: 37.7%; }
+        #box-2 { top: 12.0%; left: 62.1%; }
+        #box-3 { top: 15.0%; left: 83.7%; }
+        #box-6 { top: 54.5%; left: 25.4%; }
+        #box-7 { top: 68.5%; left: 53.5%; }
+        #box-5 { top: 59.5%; left: 73.7%; }
 
-        /* 💻 平板電腦與 iPad 縮放微調機制 */
         @media (max-width: 900px) {
-            .beige-box {
-                font-size: 12px;
-                padding: 4px 10px;
-                border-width: 2px;
-                border-radius: 8px;
-            }
+            .beige-box { font-size: 12px; padding: 4px 10px; border-width: 2px; border-radius: 8px; }
             .first-letter { font-size: 17px; }
             .lock-icon { font-size: 13px; }
             h1 { font-size: 24px; }
         }
 
-        /* 📱 手機極小螢幕縮放防爆機制 */
         @media (max-width: 600px) {
             body { padding: 10px; }
             h1 { font-size: 19px; }
             .letter-slot { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
             .tracker-container { gap: 6px; padding: 8px 15px; }
-            
-            .beige-box {
-                font-size: 9px;
-                padding: 2px 6px;
-                border-width: 1.5px;
-                border-radius: 5px;
-            }
+            .beige-box { font-size: 9px; padding: 2px 6px; border-width: 1.5px; border-radius: 5px; }
             .first-letter { font-size: 13px; }
             .lock-icon { font-size: 10px; }
-
-            .control-panel {
-                padding: 12px 20px;
-                flex-direction: column;
-                width: 100%;
-                gap: 10px;
-            }
+            .control-panel { padding: 12px 20px; flex-direction: column; width: 100%; gap: 10px; }
             input[type="text"] { width: 100%; text-align: center; }
             button { width: 100%; }
         }
@@ -250,7 +229,7 @@
         button:active { transform: translateY(4px); box-shadow: 0 0px 0px #1e7e43; }
         .team-info-tag { font-size: 16px; font-weight: bold; color: #5d4037; margin-bottom: 5px;}
 
-        /* 模態彈出視窗 (Modal) */
+        /* 模態彈出視窗 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -266,8 +245,8 @@
             border-radius: 20px;
             text-align: center;
             border: 6px solid #e67e22;
-            max-width: 420px;
-            width: 90%;
+            max-width: 550px;
+            width: 95%;
         }
         .close-btn { margin-top: 15px; background-color: #e74c3c; box-shadow: 0 4px 0px #c0392b; width: 100%; }
 
@@ -286,6 +265,25 @@
         .admin-table th { background-color: #f2f2f2; }
         .reset-btn { background-color: #7f8c8d; box-shadow: 0 4px 0px #95a5a6; }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script>
+        // ✅ 你的專屬 Firebase 金鑰設定已成功填入：
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZLAI_OgQHI17HE5I4_JX9NDpGZmpF07g",
+            authDomain: "project-2454444696087368590.firebaseapp.com",
+            databaseURL: "https://project-2454444696087368590-default-rtdb.firebaseio.com",
+            projectId: "project-2454444696087368590",
+            storageBucket: "project-2454444696087368590.firebasestorage.app",
+            messagingSenderId: "62468491829",
+            appId: "1:62468491829:web:c9553b569ae638abf97f7c",
+            measurementId: "G-67HW23QHMT"
+        };
+        // 初始化雲端資料庫
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
 </head>
 <body>
 
@@ -311,15 +309,15 @@
         </div>
 
         <div class="map-wrapper">
-            <img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png" class="map-base-gray" alt="冒險地圖">
+            <img src="map-image.png" class="map-base-gray" alt="冒險地圖">
 
-            <div class="map-slice" id="slice-1"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-2"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-3"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-4"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-5"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-6"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
-            <div class="map-slice" id="slice-7"><img src="Gemini_Generated_Image_yb2g9byb2g9byb2g.png"></div>
+            <div class="map-slice" id="slice-1"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-2"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-3"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-4"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-5"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-6"><img src="map-image.png"></div>
+            <div class="map-slice" id="slice-7"><img src="map-image.png"></div>
 
             <div class="beige-box" id="box-1"><span class="lock-icon">🔒 鎖定</span></div>
             <div class="beige-box" id="box-2"><span class="lock-icon">🔒 鎖定</span></div>
@@ -340,13 +338,12 @@
     <div class="modal-overlay" id="commonModal">
         <div class="modal-content">
             <h2 id="modalTitle">提示</h2>
-            <div id="modalBody" style="font-size: 16px; margin: 15px 0; line-height: 1.5;">內容</div>
+            <div id="modalBody" style="font-size: 16px; margin: 15px 0; line-height: 1.5; max-height: 350px; overflow-y: auto;">內容</div>
             <button id="modalBtn" class="close-btn" onclick="closeModal()">繼續前進</button>
         </div>
     </div>
 
     <script>
-        // 核心密碼本對照表
         const codeBook = {
             'L1': { id: 1, letter: 'L', word: 'imitless' },
             'E2': { id: 2, letter: 'E', word: 'xplore' },
@@ -384,6 +381,16 @@
             gameState.logs = [];
             
             saveToLocalStorage();
+            
+            // 同步建立雲端隊伍資料庫節點
+            const safeKey = nameInput.replace(/[\.\$\#\[\]]/g, "_");
+            database.ref('teams/' + safeKey).set({
+                teamName: gameState.teamName,
+                startTime: gameState.startTime,
+                unlockedIds: "",
+                lastActive: new Date().toLocaleString()
+            });
+
             renderSavedGame();
         }
 
@@ -402,7 +409,6 @@
             const code = inputField.value.trim().toUpperCase();
             if (!code) return;
 
-            // 隱藏後台指令 (輸入 ADMIN888 即可開啟控制台清除紀錄)
             if (code === 'ADMIN888') {
                 openAdminConsole();
                 inputField.value = "";
@@ -422,6 +428,13 @@
                     });
                     saveToLocalStorage();
                     
+                    // 同步更新進度到雲端
+                    const safeKey = gameState.teamName.replace(/[\.\$\#\[\]]/g, "_");
+                    database.ref('teams/' + safeKey).update({
+                        unlockedIds: gameState.unlockedIds.join(','),
+                        lastActive: new Date().toLocaleString()
+                    });
+                    
                     applyUnlockVisuals(element.id);
                     checkMilestones(element.letter + element.word);
                 }
@@ -432,16 +445,12 @@
         }
 
         function applyUnlockVisuals(id) {
-            // 讓指定的不規則切片淡入變成彩色
             document.getElementById(`slice-${id}`).classList.add('unlocked');
-
-            // 頂部收集槽亮起
             const data = Object.values(codeBook).find(item => item.id === id);
             const slot = document.getElementById(`slot-${id}`);
             slot.classList.add('active');
             slot.textContent = data.letter;
 
-            // 地圖上的白色橫幅完美展開單字全稱
             const box = document.getElementById(`box-${id}`);
             box.classList.add('active');
             box.innerHTML = `<span class="first-letter">${data.letter}</span>${data.word}`;
@@ -460,38 +469,52 @@
             }
         }
 
+        // 後台管理面板：直接抓取 Firebase 雲端所有人紀錄
         function openAdminConsole() {
-            let logRows = "";
-            Object.values(codeBook).forEach(item => {
-                const foundLog = gameState.logs.find(l => l.id === item.id);
-                const statusStr = foundLog ? `<span style="color:green;font-weight:bold;">已完成 (解鎖時間: ${foundLog.time})</span>` : `<span style="color:red;">未完成</span>`;
-                logRows += `<tr><td>${item.id}</td><td><strong>${item.letter}</strong>${item.word}</td><td>${statusStr}</td></tr>`;
-            });
+            database.ref('teams').once('value').then((snapshot) => {
+                const allTeams = snapshot.val();
+                let logRows = "";
+                let teamCount = 0;
 
-            const adminHtml = `
-                <div style="text-align:left;">
-                    <p><strong>冒險隊伍：</strong> ${gameState.teamName}</p>
-                    <p><strong>登入時間：</strong> ${gameState.startTime}</p>
-                    <p><strong>目前已解鎖數：</strong> ${gameState.unlockedIds.length} / 7</p>
-                    <table class="admin-table">
-                        <thead>
-                            <tr><th>編號</th><th>攤位元素</th><th>目前進度紀錄</th></tr>
-                        </thead>
-                        <tbody>${logRows}</tbody>
-                    </table>
-                    <br>
-                    <button class="reset-btn" onclick="resetProgress()" style="width:100%; padding: 10px; font-weight: bold; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 清除此裝置進度（供下一組使用）</button>
-                </div>
-            `;
-            
-            document.getElementById('modalTitle').textContent = "📋 大會中央數據控制台";
-            document.getElementById('modalBody').innerHTML = adminHtml;
-            document.getElementById('modalBtn').textContent = "關閉控制台";
-            document.getElementById('commonModal').style.display = 'flex';
+                if (allTeams) {
+                    Object.keys(allTeams).forEach(key => {
+                        const team = allTeams[key];
+                        teamCount++;
+                        const progressCount = team.unlockedIds ? team.unlockedIds.split(',').length : 0;
+                        logRows += `<tr>
+                            <td><strong>${team.teamName}</strong></td>
+                            <td style="font-size:12px;">${team.startTime}</td>
+                            <td><span style="color:#e67e22;font-weight:bold;">已解鎖 ${progressCount} / 7</span><br><small style="color:gray;">(${team.unlockedIds || '無'})</small></td>
+                            <td style="font-size:12px;">${team.lastActive || '無'}</td>
+                        </tr>`;
+                    });
+                } else {
+                    logRows = `<tr><td colspan="4" style="text-align:center; color:gray;">目前還沒有任何隊伍開始冒險唷！</td></tr>`;
+                }
+
+                const adminHtml = `
+                    <div style="text-align:left;">
+                        <p><strong>📊 目前雲端總參與人數/隊伍數：</strong> <span style="font-size:18px; color:green; font-weight:bold;">${teamCount}</span> 組</p>
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>隊伍名稱</th><th>登入時間</th><th>目前進度</th><th>最後活躍</th></tr>
+                            </thead>
+                            <tbody>${logRows}</tbody>
+                        </table>
+                        <br>
+                        <button class="reset-btn" onclick="resetProgress()" style="width:100%; padding: 10px; font-weight: bold; color: white; border: none; border-radius: 8px; cursor: pointer;">🔄 清除本機畫面（返回隊伍登入頁）</button>
+                    </div>
+                `;
+                
+                document.getElementById('modalTitle').textContent = "📋 大會中央雲端數據控制台";
+                document.getElementById('modalBody').innerHTML = adminHtml;
+                document.getElementById('modalBtn').textContent = "關閉控制台";
+                document.getElementById('commonModal').style.display = 'flex';
+            });
         }
 
         function resetProgress() {
-            if (confirm("確定要格式化清除此組別的所有紀錄，並返回登入頁嗎？(此動作無法還原)")) {
+            if (confirm("確定要格式化清除「此裝置」的畫面並返回登入頁嗎？(不會刪除雲端其他人的數據)")) {
                 localStorage.removeItem('adventure_game_state');
                 location.reload();
             }
