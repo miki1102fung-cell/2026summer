@@ -467,13 +467,13 @@
         function checkMilestones(currentWord) {
             const count = gameState.unlockedIds.length;
             if (count === 7) {
-                showModal("🎉 終極成就：LEVEL UP！ 🎉", `成功啟動最後一個元素「${currentWord}」！你們完美集齊了七大元素並成功發掘這個冒險地圖的每個角落！請立刻前往終點站領取大會榮譽獎品！`);
+                showModal("🎉 終極成就：LEVEL UP！ 🎉", `成功啟動最後一塊元素「${currentWord}」！你們完美集齊了 7 大元素並成功發掘這個冒險地圖的每個角落！請立刻前往終點站領取大會榮譽獎品！`);
             } else if (count === 5) {
-                showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 5 個元素了，隱藏訊息 <strong>LEVEL UP</strong> 快要完全出現了！加油！`);
+                showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 5 個元素了！隱藏訊息 <strong>LEVEL UP</strong> 快要完全出現了！加油！`);
             } else if (count === 3) {
-                showModal("✨ 初試身手 ✨", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 3 個元素了，這裏還有許多角落還未被發掘，讓我們繼續前進下一站！`);
+                showModal("✨ 初試身手 ✨", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 3 個元素了！這裏還有許多角落還未被發掘，讓我們繼續前進下一站！`);
             } else {
-                showModal("解鎖成功！", `恭喜獲得 <strong>${currentWord}</strong> 元素！相關地圖區域已成功被激活！`);
+                showModal("解鎖成功！", `恭喜獲得 <strong>${currentWord}</strong> 元素！相應地圖區域已成功被激活！`);
             }
         }
 
