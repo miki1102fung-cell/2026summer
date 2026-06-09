@@ -121,13 +121,15 @@
         }
         .map-slice.unlocked { opacity: 1; }
 
-        /* 有機不規則、無縫拼接的 clip-path */
+        /* ✅ 已更新：對應你的上/下排順序調整地圖切塊 */
+        /* 上排 (左到右): Limitless(1), Explore(2), Valued(3), Experience(4) */
         #slice-1 { clip-path: polygon(0% 0%, 30% 0%, 25% 25%, 35% 50%, 0% 45%); }
-        #slice-4 { clip-path: polygon(30% 0%, 55% 0%, 60% 30%, 50% 52%, 35% 50%, 25% 25%); }
-        #slice-2 { clip-path: polygon(55% 0%, 80% 0%, 75% 25%, 82% 55%, 50% 52%, 60% 30%); }
-        #slice-3 { clip-path: polygon(80% 0%, 100% 0%, 100% 54%, 82% 55%, 75% 25%); }
-        #slice-6 { clip-path: polygon(0% 45%, 35% 50%, 40% 75%, 30% 100%, 0% 100%); }
-        #slice-7 { clip-path: polygon(35% 50%, 50% 52%, 82% 55%, 70% 80%, 75% 100%, 30% 100%, 40% 75%); }
+        #slice-2 { clip-path: polygon(30% 0%, 55% 0%, 60% 30%, 50% 52%, 35% 50%, 25% 25%); }
+        #slice-3 { clip-path: polygon(55% 0%, 80% 0%, 75% 25%, 82% 55%, 50% 52%, 60% 30%); }
+        #slice-4 { clip-path: polygon(80% 0%, 100% 0%, 100% 54%, 82% 55%, 75% 25%); }
+        /* 下排 (左到右): Positive(7), Undertake(6), Leadership(5) */
+        #slice-7 { clip-path: polygon(0% 45%, 35% 50%, 40% 75%, 30% 100%, 0% 100%); }
+        #slice-6 { clip-path: polygon(35% 50%, 50% 52%, 82% 55%, 70% 80%, 75% 100%, 30% 100%, 40% 75%); }
         #slice-5 { clip-path: polygon(82% 55%, 100% 54%, 100% 100%, 75% 100%, 70% 80%); }
 
         /* 漂浮金鎖提示框 */
@@ -164,13 +166,15 @@
         }
         .lock-icon { font-size: 16px; color: #95a5a6; margin-right: 2px; }
 
-        /* 精確對應坐標 */
+        /* ✅ 已更新：精確對應標籤在畫面上的上下排順序 */
+        /* 上排 */
         #box-1 { top: 17.0%; left: 15.5%; }
-        #box-4 { top: 15.5%; left: 37.7%; }
-        #box-2 { top: 12.0%; left: 62.1%; }
-        #box-3 { top: 15.0%; left: 83.7%; }
-        #box-6 { top: 54.5%; left: 25.4%; }
-        #box-7 { top: 68.5%; left: 53.5%; }
+        #box-2 { top: 15.5%; left: 37.7%; }
+        #box-3 { top: 12.0%; left: 62.1%; }
+        #box-4 { top: 15.0%; left: 83.7%; }
+        /* 下排 */
+        #box-7 { top: 54.5%; left: 25.4%; }
+        #box-6 { top: 68.5%; left: 53.5%; }
         #box-5 { top: 59.5%; left: 73.7%; }
 
         @media (max-width: 900px) {
@@ -409,6 +413,7 @@
             const code = inputField.value.trim().toUpperCase();
             if (!code) return;
 
+            // 管理員代碼：在輸入框打 ADMIN888 開啟後台
             if (code === 'ADMIN888') {
                 openAdminConsole();
                 inputField.value = "";
@@ -447,10 +452,13 @@
         function applyUnlockVisuals(id) {
             document.getElementById(`slice-${id}`).classList.add('unlocked');
             const data = Object.values(codeBook).find(item => item.id === id);
+            
+            // 點亮上方 LEVEL UP 燈號
             const slot = document.getElementById(`slot-${id}`);
             slot.classList.add('active');
             slot.textContent = data.letter;
 
+            // 顯示該區塊的名牌
             const box = document.getElementById(`box-${id}`);
             box.classList.add('active');
             box.innerHTML = `<span class="first-letter">${data.letter}</span>${data.word}`;
@@ -461,7 +469,7 @@
             if (count === 7) {
                 showModal("🎉 終極成就：LEVEL UP！ 🎉", `成功啟動最後一個元素「${currentWord}」！你們完美集齊了七大元素並成功發掘這個冒險地圖的每個角落！請立刻前往終點站領取大會榮譽獎品！`);
             } else if (count === 5) {
-                showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你收集到5個元素，隱藏訊息 <strong>LEVEL UP</strong> 快要完全出現了！加油！`);
+                showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 5 個元素了，隱藏訊息 <strong>LEVEL UP</strong> 快要完全出現了！加油！`);
             } else if (count === 3) {
                 showModal("✨ 初試身手 ✨", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 3 個元素了，這裏還有許多角落還未被發掘，讓我們繼續前進下一站！`);
             } else {
