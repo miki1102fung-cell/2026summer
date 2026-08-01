@@ -469,7 +469,7 @@ h1 { font-size: 28px; }
         function checkMilestones(currentWord) {
             const count = gameState.unlockedIds.length;
             if (count === 7) {
-                showModal("🎉 終極成就：LEVEL UP！ 🎉", `恭喜你們已集齊所有元素「${currentWord}」！你們已成功探索這個冒險地圖的每個角落！請前往接待處領取你們的專屬禮物！`);
+                showModal("🎉 終極成就：LEVEL UP！ 🎉", `恭喜你們已集齊所有元素！你們已成功探索這個冒險地圖的每個角落！請前往接待處領取你們的專屬禮物！`);
             } else if (count === 5) {
                 showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 5 個元素！你們即將到達終點，讓我們繼續加油～`);
             } else if (count === 3) {
