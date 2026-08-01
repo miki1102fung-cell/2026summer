@@ -295,7 +295,7 @@ h1 { font-size: 28px; }
 
     <div id="login-screen">
         <h2 class="wood-title">📜 冒險家營地</h2>
-        <p style="font-size: 16px; color: #6d4c41; line-height: 1.6;">歡迎各位冒險家！請輸入你們的「組別名稱」，並開始本次探險！</p>
+        <p style="font-size: 16px; color: #6d4c41; line-height: 1.6;">歡迎各位冒險家！請輸入你們的「組別名稱」，並開始本次冒險！</p>
         <input type="text" id="teamNameInput" placeholder="請輸入組員的姓名..." style="width:80%; margin-bottom:20px; text-transform:none;"><br>
         <button onclick="startAdventure()">開啟冒險地圖 ✨</button>
     </div>
@@ -403,7 +403,7 @@ h1 { font-size: 28px; }
         function renderSavedGame() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
-            document.getElementById('currentTeamDisplay').innerHTML = `🏃‍♂️ 正在冒險的隊伍：<strong>${gameState.teamName}</strong> (開始時間：${gameState.startTime})`;
+            document.getElementById('currentTeamDisplay').innerHTML = `正在冒險的隊伍：<strong>${gameState.teamName}</strong> (開始時間：${gameState.startTime})`;
 
             gameState.unlockedIds.forEach(id => {
                 applyUnlockVisuals(id);
@@ -469,7 +469,7 @@ h1 { font-size: 28px; }
         function checkMilestones(currentWord) {
             const count = gameState.unlockedIds.length;
             if (count === 7) {
-                showModal("🎉 終極成就：LEVEL UP！ 🎉", `恭喜你們已集齊所有元素「${currentWord}」！你們已成功探索這個冒險地圖的每個角落！請前往終點站領取你們的「星」級禮物！`);
+                showModal("🎉 終極成就：LEVEL UP！ 🎉", `恭喜你們已集齊所有元素「${currentWord}」！你們已成功探索這個冒險地圖的每個角落！請前往接待處領取你們的專屬禮物！`);
             } else if (count === 5) {
                 showModal("🌟 實力驚人 🌟", `成功喚醒「${currentWord}」區塊！恭喜你們收集到 5 個元素！你們即將到達終點，讓我們繼續加油～`);
             } else if (count === 3) {
