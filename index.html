@@ -20,12 +20,14 @@
             color: #4a3b32;
         }
 
-        h1 {
-            color: #d35400;
-            text-shadow: 2px 2px 0px #f1c40f;
-            margin: 10px 0;
-            font-size: 28px;
-        }
+       /* 讓 h1 與副標題 h2 共用字體顏色與黃色陰影特效 */
+h1, #game-screen h2 {
+    color: #d35400;
+    text-shadow: 2px 2px 0px #f1c40f;
+    margin: 5px 0;
+}
+h1 { font-size: 28px; }
+#game-screen h2 { font-size: 22px; } /* 設定副標題的大小 */
 
         /* 登入畫面 */
         #login-screen {
